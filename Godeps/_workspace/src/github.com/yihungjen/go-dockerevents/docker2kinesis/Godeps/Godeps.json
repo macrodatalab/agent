@@ -1,0 +1,53 @@
+{
+	"ImportPath": "github.com/yihungjen/go-dockerevents/docker2kinesis",
+	"GoVersion": "go1.4.2",
+	"Deps": [
+		{
+			"ImportPath": "github.com/aws/aws-sdk-go/aws",
+			"Comment": "v0.6.5",
+			"Rev": "8b15d2217025f7d51ae34b88497232d3b6cfca81"
+		},
+		{
+			"ImportPath": "github.com/aws/aws-sdk-go/internal/endpoints",
+			"Comment": "v0.6.5",
+			"Rev": "8b15d2217025f7d51ae34b88497232d3b6cfca81"
+		},
+		{
+			"ImportPath": "github.com/aws/aws-sdk-go/internal/protocol/json/jsonutil",
+			"Comment": "v0.6.5",
+			"Rev": "8b15d2217025f7d51ae34b88497232d3b6cfca81"
+		},
+		{
+			"ImportPath": "github.com/aws/aws-sdk-go/internal/protocol/jsonrpc",
+			"Comment": "v0.6.5",
+			"Rev": "8b15d2217025f7d51ae34b88497232d3b6cfca81"
+		},
+		{
+			"ImportPath": "github.com/aws/aws-sdk-go/internal/protocol/rest",
+			"Comment": "v0.6.5",
+			"Rev": "8b15d2217025f7d51ae34b88497232d3b6cfca81"
+		},
+		{
+			"ImportPath": "github.com/aws/aws-sdk-go/internal/signer/v4",
+			"Comment": "v0.6.5",
+			"Rev": "8b15d2217025f7d51ae34b88497232d3b6cfca81"
+		},
+		{
+			"ImportPath": "github.com/aws/aws-sdk-go/service/kinesis",
+			"Comment": "v0.6.5",
+			"Rev": "8b15d2217025f7d51ae34b88497232d3b6cfca81"
+		},
+		{
+			"ImportPath": "github.com/fsouza/go-dockerclient",
+			"Rev": "eeaf15461b1f9d4ed2ffbd1ae1afde4b66527fd4"
+		},
+		{
+			"ImportPath": "github.com/vaughan0/go-ini",
+			"Rev": "a98ad7ee00ec53921f08832bc06ecf7fd600e6a1"
+		},
+		{
+			"ImportPath": "gopkg.in/yaml.v2",
+			"Rev": "7ad95dd0798a40da1ccdff6dff35fd177b5edf40"
+		}
+	]
+}

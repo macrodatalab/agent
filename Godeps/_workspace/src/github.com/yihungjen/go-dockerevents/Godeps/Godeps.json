@@ -1,0 +1,14 @@
+{
+	"ImportPath": "github.com/yihungjen/go-dockerevents",
+	"GoVersion": "go1.4.2",
+	"Deps": [
+		{
+			"ImportPath": "github.com/fsouza/go-dockerclient",
+			"Rev": "eeaf15461b1f9d4ed2ffbd1ae1afde4b66527fd4"
+		},
+		{
+			"ImportPath": "gopkg.in/yaml.v2",
+			"Rev": "7ad95dd0798a40da1ccdff6dff35fd177b5edf40"
+		}
+	]
+}
