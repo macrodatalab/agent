@@ -26,7 +26,7 @@ Commands:
 Run '{{.Name}} COMMAND --help' for more information on a command.
 `
 
-	cli.CommandHelpTemplate = `{{$DISCOVERY := (eq .Name "monitor")}}Usage: ` + path.Base(os.Args[0]) + ` {{.Name}}{{if .Flags}} [OPTIONS]{{end}} {{if $DISCOVERY}}<discovery>{{end}}
+	cli.CommandHelpTemplate = `{{$DISCOVERY := or (eq .Name "monitor") (eq .Name "watch")}}Usage: ` + path.Base(os.Args[0]) + ` {{.Name}}{{if .Flags}} [OPTIONS]{{end}} {{if $DISCOVERY}}<discovery>{{end}}
 
 {{.Usage}}{{if $DISCOVERY}}
 
