@@ -4,22 +4,42 @@ import (
 	"encoding/json"
 	log "github.com/Sirupsen/logrus"
 	"github.com/codegangsta/cli"
-	"github.com/docker/libkv/store"
 	disc "github.com/yihungjen/agent/discovery"
 	d2k "github.com/yihungjen/go-dockerevents"
-	"os"
+	"path"
 	"time"
 )
 
-const (
-	INSTANCE_ROOT = "instances"
-)
-
-func getDiscovery(c *cli.Context) string {
-	if len(c.Args()) == 1 {
-		return c.Args()[0]
-	}
-	return os.Getenv("SWARM_DISCOVERY")
+func publish(dflag string, addr string, ttl time.Duration) (event chan *d2k.Event) {
+	event = make(chan *d2k.Event, 100)
+	go func() {
+		client, _ := d2k.NewClient()
+		for ev := range event {
+			container, _ := client.InspectContainer(ev.ID)
+			portmap := container.NetworkSettings.PortMappingAPI()
+			for idx, _ := range portmap {
+				if portmap[idx].PrivatePort != 0 {
+					portmap[idx].IP = addr
+				}
+			}
+			payload, _ := json.Marshal(portmap)
+			for {
+				dkv, err := disc.New(dflag, "")
+				if err != nil {
+					log.Fatal("unable to establish connection to discovery -- %v", err)
+				}
+				err = dkv.Set(path.Join(INSTANCE_ROOT, ev.ID), string(payload), ttl)
+				if err != nil {
+					log.Warning(err)
+					time.Sleep(1 * time.Second)
+					continue
+				}
+				log.WithFields(log.Fields{"discovery": dflag, "addr": addr, "ttl": ttl}).Infof("Registering instance: %s", ev.ID)
+				break
+			}
+		}
+	}()
+	return
 }
 
 func monitor(c *cli.Context) {
@@ -38,31 +58,28 @@ func monitor(c *cli.Context) {
 		log.Fatal("invlaid --ttl: %v", err)
 	}
 
-	dkv, drr := disc.New(dflag, &disc.Options{
-		INSTANCE_ROOT,
-		&store.Config{EphemeralTTL: ttl},
-	})
-	if drr != nil {
-		log.Fatal(drr)
+	filter := d2k.ParseEventFilter(c.String("filter"))
+
+	// init docker client for container inspection
+	client, err := d2k.NewClient()
+	if err != nil {
+		log.Fatal("unable to establish docker client: %v", err)
 	}
 
-	evFilter := d2k.ParseEventFilter(c.String("filter"))
+	// init docker event loop
+	eventSink := d2k.EventLoop(filter, 100)
 
-	eventSink := make(chan *d2k.Event, 100)
-	go d2k.EventLoop(eventSink, evFilter)
+	// init docker event publisher
+	etcdpub := publish(dflag, addr, ttl)
 
 	log.Println("begin monitor process...")
 	for event := range eventSink {
 		switch event.Status {
-		default:
-			break
 		case "start":
-			// TODO: send monitored instances to discovery service
-			payload, _ := json.Marshal(event)
-			log.WithFields(log.Fields{"discovery": dflag, "addr": addr, "ttl": ttl}).Infof("Registering instance: %s", event.ID)
-			if err := dkv.Put(event.ID, payload, &store.WriteOptions{Ephemeral: true}); err != nil {
-				log.Error(err)
-			}
+			log.Infof("Obtained instance: %s", event.ID)
+			container, _ := client.InspectContainer(event.ID)
+			container.NetworkSettings.PortMappingAPI()
+			etcdpub <- event
 			break
 		}
 	}

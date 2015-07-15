@@ -1,6 +1,9 @@
 package main
 
-import "github.com/codegangsta/cli"
+import (
+	"github.com/codegangsta/cli"
+	"os"
+)
 
 var (
 	commands = []cli.Command{
@@ -37,5 +40,17 @@ var (
 			},
 			Action: monitor,
 		},
+		{
+			Name:   "watch",
+			Usage:  "watch instances' expiration on this node",
+			Action: watch,
+		},
 	}
 )
+
+func getDiscovery(c *cli.Context) string {
+	if len(c.Args()) == 1 {
+		return c.Args()[0]
+	}
+	return os.Getenv("SWARM_DISCOVERY")
+}
