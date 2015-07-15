@@ -18,21 +18,8 @@
 			"Rev": "c904d7032a70da6551c43929f199244f6a45f4c1"
 		},
 		{
-			"ImportPath": "github.com/docker/libkv",
-			"Rev": "057813e38a46ee5951b1fc33f6f749f7cfce2941"
-		},
-		{
 			"ImportPath": "github.com/fsouza/go-dockerclient",
 			"Rev": "eeaf15461b1f9d4ed2ffbd1ae1afde4b66527fd4"
-		},
-		{
-			"ImportPath": "github.com/hashicorp/consul/api",
-			"Comment": "v0.5.2-148-gcd41dab",
-			"Rev": "cd41daba315ef609e4b90a1ddd5e13e5f3c73590"
-		},
-		{
-			"ImportPath": "github.com/samuel/go-zookeeper/zk",
-			"Rev": "5bb5cfc093ad18a28148c578f8632cfdb4d802e4"
 		},
 		{
 			"ImportPath": "github.com/ugorji/go/codec",
@@ -40,7 +27,7 @@
 		},
 		{
 			"ImportPath": "github.com/yihungjen/go-dockerevents",
-			"Rev": "aa467181aacdd6027bc9fafc88a326c022036549"
+			"Rev": "95860df18df6668480b8194faa613e4b5a741915"
 		},
 		{
 			"ImportPath": "gopkg.in/yaml.v2",
