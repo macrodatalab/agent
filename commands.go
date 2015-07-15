@@ -13,7 +13,7 @@ var (
 			Flags: []cli.Flag{
 				cli.StringFlag{
 					Name:  "images",
-					Usage: "Limit what containers are reported by image",
+					Usage: "Limit what containers are reported by image, separated by ','",
 				},
 			},
 			Action: list,
