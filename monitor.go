@@ -13,9 +13,17 @@ import (
 func publish(dflag string, addr string, ttl time.Duration) (event chan *d2k.Event) {
 	event = make(chan *d2k.Event, 100)
 	go func() {
-		client, _ := d2k.NewClient()
+		// init docker client for container inspection
+		client, err := d2k.NewClient()
+		if err != nil {
+			log.Fatal("unable to establish docker client: %v", err)
+		}
 		for ev := range event {
-			container, _ := client.InspectContainer(ev.ID)
+			container, err := client.InspectContainer(ev.ID)
+			if err != nil {
+				log.Error(err)
+				continue
+			}
 			portmap := container.NetworkSettings.PortMappingAPI()
 			for idx, _ := range portmap {
 				if portmap[idx].PrivatePort != 0 {
@@ -60,12 +68,6 @@ func monitor(c *cli.Context) {
 
 	filter := d2k.ParseEventFilter(c.String("filter"))
 
-	// init docker client for container inspection
-	client, err := d2k.NewClient()
-	if err != nil {
-		log.Fatal("unable to establish docker client: %v", err)
-	}
-
 	// init docker event loop
 	eventSink := d2k.EventLoop(filter, 100)
 
@@ -77,8 +79,6 @@ func monitor(c *cli.Context) {
 		switch event.Status {
 		case "start":
 			log.Infof("Obtained instance: %s", event.ID)
-			container, _ := client.InspectContainer(event.ID)
-			container.NetworkSettings.PortMappingAPI()
 			etcdpub <- event
 			break
 		}
