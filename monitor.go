@@ -10,6 +10,10 @@ import (
 	"time"
 )
 
+const (
+	INVALIDATE_SERVICE_TTL = 1 * time.Second
+)
+
 func publish(dflag string, addr string, ttl time.Duration) (event chan *d2k.Event) {
 	event = make(chan *d2k.Event, 100)
 	go func() {
@@ -36,13 +40,21 @@ func publish(dflag string, addr string, ttl time.Duration) (event chan *d2k.Even
 				if err != nil {
 					log.Fatal("unable to establish connection to discovery -- %v", err)
 				}
-				err = dkv.Set(path.Join(INSTANCE_ROOT, ev.ID), string(payload), ttl)
+				switch ev.Status {
+				case "start":
+					log.WithFields(log.Fields{"discovery": dflag, "addr": addr, "ttl": ttl}).Infof("Registering instance: %s", ev.ID)
+					err = dkv.Set(path.Join(INSTANCE_ROOT, ev.ID), string(payload), ttl)
+					break
+				case "stop":
+					log.WithFields(log.Fields{"discovery": dflag, "addr": addr, "ttl": ttl}).Infof("Invalidate instance: %s", ev.ID)
+					err = dkv.Set(path.Join(INSTANCE_ROOT, ev.ID), "", INVALIDATE_SERVICE_TTL)
+					break
+				}
 				if err != nil {
 					log.Warning(err)
 					time.Sleep(1 * time.Second)
 					continue
 				}
-				log.WithFields(log.Fields{"discovery": dflag, "addr": addr, "ttl": ttl}).Infof("Registering instance: %s", ev.ID)
 				break
 			}
 		}
@@ -79,6 +91,10 @@ func monitor(c *cli.Context) {
 		switch event.Status {
 		case "start":
 			log.Infof("Obtained instance: %s", event.ID)
+			etcdpub <- event
+			break
+		case "stop":
+			log.Infof("Spot invalid instance: %s", event.ID)
 			etcdpub <- event
 			break
 		}
