@@ -4,8 +4,8 @@ import (
 	"encoding/json"
 	log "github.com/Sirupsen/logrus"
 	"github.com/codegangsta/cli"
-	disc "github.com/yihungjen/agent/discovery"
-	d2k "github.com/yihungjen/go-dockerevents"
+	disc "github.com/jeffjen/agent/discovery"
+	d2k "github.com/jeffjen/go-dockerevents"
 	"path"
 	"time"
 )

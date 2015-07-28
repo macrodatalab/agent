@@ -5,7 +5,7 @@ import (
 	log "github.com/Sirupsen/logrus"
 	"github.com/codegangsta/cli"
 	docker "github.com/fsouza/go-dockerclient"
-	"github.com/yihungjen/go-dockerevents"
+	"github.com/jeffjen/go-dockerevents"
 	"strings"
 )
 
