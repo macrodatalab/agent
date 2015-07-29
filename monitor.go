@@ -46,7 +46,7 @@ func publish(dflag string, addr string, ttl time.Duration) (event chan *d2k.Even
 					err = dkv.Set(path.Join(INSTANCE_ROOT, ev.ID), string(payload), ttl)
 					break
 				case "stop":
-					log.WithFields(log.Fields{"discovery": dflag, "addr": addr, "ttl": ttl}).Infof("Invalidate instance: %s", ev.ID)
+					log.WithFields(log.Fields{"discovery": dflag, "addr": addr, "ttl": INVALIDATE_SERVICE_TTL}).Infof("Invalidate instance: %s", ev.ID)
 					err = dkv.Set(path.Join(INSTANCE_ROOT, ev.ID), "", INVALIDATE_SERVICE_TTL)
 					break
 				}
